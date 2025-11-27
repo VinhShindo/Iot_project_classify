@@ -1,8 +1,5 @@
 # 🤖 HỆ THỐNG PHÂN LOẠI VẬT THỂ TỰ ĐỘNG THÔNG MINH (IoT Sorting Machine)
 
-[![Project Status](https://img.shields.io/badge/Status-Completed-brightgreen)](Tạo liên kết đến Repo GitHub của bạn)
-[![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
-
 ## 💡 Giới Thiệu Dự Án
 
 Dự án này là một **hệ thống phân loại vật thể tự động** dựa trên kiến trúc IoT, được thiết kế để nhận dạng và phân loại các vật thể theo **màu sắc** (Đỏ, Vàng, Xanh) và **hình dạng** (Tròn, Vuông). Hệ thống tận dụng sức mạnh xử lý của **ESP32-CAM** cho tác vụ nhận dạng và WebServer, đồng thời sử dụng **Arduino Uno** để điều khiển các cơ cấu vật lý một cách chính xác. Toàn bộ quá trình được giám sát qua một **Web Dashboard** thời gian thực.
@@ -91,7 +88,6 @@ Dữ liệu di chuyển theo một luồng rõ ràng để đảm bảo tốc đ
 
 Dự án được phát triển bởi **Nguyễn Quang Vinh**.
 
-* GitHub: [Liên kết đến GitHub của bạn]
-* LinkedIn: [Liên kết đến LinkedIn của bạn]
+* GitHub: https://github.com/VinhShindo
 
 Dự án này được phát hành dưới giấy phép MIT. Xem file [LICENSE](LICENSE) để biết thêm chi tiết.
