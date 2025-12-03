@@ -178,13 +178,11 @@ String createJsonPayload_Completed() {
     doc.clear();
     doc["type"] = "COMPLETED";
     
-    // Dữ liệu sự kiện cuối chu trình
     doc["code"] = vatTheCanXuLy.maVatThe;
-    doc["isSuccess"] = chuTrinhThanhCong; // Cờ báo thành công/thất bại
+    doc["isSuccess"] = chuTrinhThanhCong;
     doc["cycleTimeMs"] = cycleTimeMs;
     doc["retryCount"] = soLanGap;
 
-    // Dữ liệu đếm tổng hợp (Đồng bộ hóa/Khởi tạo trạng thái)
     JsonObject stats = doc.createNestedObject("stats");
     stats["total"] = totalSorted;
     stats["skipped"] = count_SKIP;
@@ -498,7 +496,6 @@ void scanObject() {
 
 void setup() {
     Serial.begin(9600);
-    // espSerial.begin(9600);
 
     pinMode(TRIG_PIN, OUTPUT);
     pinMode(ECHO_PIN, INPUT);
