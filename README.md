@@ -1,104 +1,82 @@
 # 🤖 HỆ THỐNG PHÂN LOẠI VẬT THỂ TỰ ĐỘNG THÔNG MINH (IoT Sorting Machine)
 
-## 🏆 Poster/Banner Dự Án
+## 💡 Giới Thiệu Dự Án
 
-*(Chèn hình ảnh Poster hoặc Banner chuyên nghiệp của dự án tại đây.)*
-
-****
+Dự án này là một **hệ thống phân loại vật thể tự động** dựa trên kiến trúc IoT, được thiết kế để nhận dạng và phân loại các vật thể theo **màu sắc** (Đỏ, Vàng, Xanh) và **hình dạng** (Tròn, Vuông). Hệ thống tận dụng **Arduino Uno** để điều khiển các cơ cấu vật lý và thực hiện toàn bộ logic phân loại. **ESP32-CAM** đóng vai trò là **IoT Gateway** và **Web Server** cung cấp một **Web Dashboard** thời gian thực để giám sát và điều khiển từ xa.
 
 ---
+## ✨ Tính Năng Chính
 
-## 💡 Giới Thiệu và Tầm Nhìn Dự Án
-
-Dự án này là một **hệ thống phân loại vật thể tự động** dựa trên kiến trúc IoT, thể hiện sự kết hợp hài hòa giữa **Xử lý thị giác** (Vision Processing) và **Điều khiển cơ khí chính xác** (Precision Mechanical Control). Hệ thống được thiết kế để nhận dạng và phân loại các vật thể theo **màu sắc** (Đỏ, Vàng, Xanh) và **hình dạng** (Tròn, Vuông), hỗ trợ 6 mã sản phẩm khác nhau.
-
-Mục tiêu chính là tạo ra một giải pháp giám sát và điều khiển từ xa, cung cấp dữ liệu vận hành thời gian thực (**Real-time Analytics**) thông qua một **Web Dashboard** hiện đại, làm nền tảng cho các ứng dụng **Nhà máy Thông minh (Smart Factory)** hoặc **Tự động hóa giáo dục**.
-
----
-
-## ✨ Tính Năng Nổi Bật
-
-* **Phân loại đa chiều:** Phân loại chính xác 6 mã sản phẩm dựa trên sự kết hợp của Màu sắc và Hình dạng:
-    * **6 Mã sản phẩm:** **TD** (Tròn Đỏ), **VD** (Vuông Đỏ), **TV** (Tròn Vàng), **VV** (Vuông Vàng), **TX** (Tròn Xanh), **VX** (Vuông Xanh).
-* **Giám sát & Phân tích IoT:** Web Dashboard tương tác, cập nhật qua **WebSocket**, cung cấp dữ liệu **Tốc độ (PPM)**, **Độ chính xác (Accuracy)**, thống kê biểu đồ phân phối sản phẩm (sử dụng **Chart.js**), và trạng thái cảm biến.
-* **Video và Điều khiển Trực tiếp:** Truyền luồng **Video Live Stream** (MJPEG) và khả năng **Điều chỉnh góc quét Camera (Pan Control)** từ xa qua Dashboard.
-* **Chẩn đoán Trạng thái:** Hiển thị trạng thái hoạt động của các cơ cấu chính (Arm, Conveyor) và cảnh báo vật lý (IR Sensor Blocked).
+* **Phân loại 6 mã sản phẩm:** TD (Tròn Đỏ), VD (Vuông Đỏ), TV (Tròn Vàng), VV (Vuông Vàng), TX (Tròn Xanh), VX (Vuông Xanh).
+* **Giám sát Video Trực tiếp:** Truyền luồng video từ ESP32-CAM lên Dashboard qua HTTP Live Stream.
+* **Web Dashboard Thời gian thực:** Cập nhật các chỉ số phân loại, **Tốc độ** (PPM), **Độ chính xác** (Accuracy), và trạng thái cảm biến qua kênh **WebSocket** tốc độ cao.
+* **Điều khiển Từ xa:** Điều chỉnh góc quét camera (Pan Control) và thiết lập lại bộ đếm từ giao diện web.
+* **Tự động phục hồi lỗi:** Cơ chế **thử lại** (Retry) nếu vật thể không được gắp thành công sau khi phân loại.
 
 ---
 
 ## 🛠️ Công Nghệ và Vai trò Chi tiết
 
-Dự án sử dụng mô hình kiến trúc **Gateway-Client** phân tán giữa hai vi điều khiển để tối ưu hiệu suất.
+Dự án sử dụng kiến trúc phân tán giữa hai vi điều khiển để đảm bảo hiệu suất và độ tin cậy.
 
-### 1. 🧠 ESP32-CAM (Xử lý thông minh & IoT Gateway)
+### 1. 🧠 ESP32-CAM (IoT Gateway & Web Server)
 
 | Chức năng | Vai trò | Công nghệ |
 | :--- | :--- | :--- |
-| **Phân tích Thị giác** | Chụp ảnh, thực hiện các thuật toán nhận dạng màu sắc (RGB) và hình dạng. | OpenCV/Thuật toán Ảnh cơ bản |
-| **Giao tiếp IoT** | Xây dựng **WebSocket Server** để đẩy dữ liệu JSON (REALTIME, STATUS, COMPLETED). | **WebSocket** |
-| **Web Server & Stream** | Phục vụ Dashboard (HTML/JS) và cung cấp luồng **Video MJPEG**. | **HTTP Server** |
-| **Giao tiếp Serial** | Gửi lệnh điều khiển cấp cao (`SORT:TD`) đến Arduino Uno. | **UART (Serial2)** |
+| **Giao tiếp IoT** | Xây dựng **WebSocket Server** (Port 81) để gửi dữ liệu thống kê và trạng thái lên Dashboard. | WebSocket |
+| **Giao tiếp Serial** | **Nhận** dữ liệu trạng thái **JSON** từ Arduino. **Gửi** lệnh điều khiển cấp thấp (như `SERVO:90`, `STOP`) đến Arduino. | UART (Serial 2) |
+| **Web Server** | Cung cấp giao diện Dashboard (`/`) và luồng video trực tiếp (`/stream`). | HTTP |
+| **Camera** | Cung cấp luồng video trực tiếp (Live Stream) cho người dùng giám sát. | OV2640 |
 
-### 2. ⚙️ Arduino Uno (Điều khiển Cơ cấu Chính xác - Slave)
+### 2. ⚙️ Arduino Uno (Điều khiển Cơ cấu Chính xác & Logic Phân loại)
 
 | Chức năng | Vai trò | Giao tiếp |
 | :--- | :--- | :--- |
-| **Thực thi Lệnh** | Nhận, giải mã và thực thi các lệnh điều khiển (string) gửi từ ESP32-CAM. | **UART (Serial)** |
-| **Điều khiển Cơ cấu** | Điều khiển góc quay của **Servo MG996R** và kiểm soát **Motor DC** (Băng tải). | **PWM, Digital I/O** |
-| **Cảm biến Vật lý** | Đọc dữ liệu từ **Cảm biến IR** để phát hiện vật thể. | **Digital I/O** |
+| **Thu thập Cảm biến** | Đọc dữ liệu từ HC-SR04, GY-31, và cảm biến IR. | Digital/Analog I/O |
+| **Logic Phân loại** | **Xác định Mã Phân loại** (TD, VX,...) dựa trên dữ liệu màu sắc (GY-31) và hình khối (HC-SR04). | C Logic |
+| **Điều khiển Cơ cấu** | Điều khiển **Servo MG996R** (cánh tay gạt) và **Motor DC** (băng tải) theo kết quả phân loại. | PWM, Digital I/O |
+| **Giao tiếp Serial** | **Gửi** các gói **JSON** chứa dữ liệu trạng thái (Mã, RGB, Hình khối, Bộ đếm) đến ESP32. **Nhận** các lệnh điều khiển từ ESP32. | UART (Serial) |
+
+### 3. Thành phần Phần cứng Chính
+
+* **Vi điều khiển:** **ESP32-CAM**, **Arduino Uno**
+* **Cơ cấu:** **Servo MG996R** (Cánh tay gạt), **Motor DC** & Driver (Băng tải).
+* **Cảm biến:** Cảm biến **IR** (Phát hiện vật thể), Cảm biến **GY-31** (Nhận dạng màu sắc), Cảm biến **HC-SR04** (Phát hiện vật thể và nhận dạng hình khối).
+* **Giao diện:** HTML/CSS/JavaScript, **Chart.js**.
 
 ---
 
-## ⚙️ Sơ Đồ Hoạt Động (System Flow Architecture)
+## ⚙️ Sơ Đồ Hoạt Động (System Architecture)
 
-Quá trình phân loại là một chu trình đồng bộ được điều khiển bởi luồng dữ liệu hai chiều:
+Luồng hoạt động dưới đây mô tả chu trình phân loại và giao tiếp giữa các thành phần. 
 
-****
-
-1.  **Phát hiện:** Vật thể kích hoạt **Cảm biến IR** (hoặc cảm biến khoảng cách).
-2.  **Xử lý:** **ESP32-CAM** chụp ảnh, xử lý và xác định **Mã phân loại** (`VX`).
-3.  **Lệnh:** **ESP32-CAM** gửi lệnh **SORT** tới Arduino Uno qua Serial: `SORT:VX`.
-4.  **Cập nhật:** **ESP32-CAM** đẩy dữ liệu thống kê (`COMPLETED`) và trạng thái hiện tại (`REALTIME`) lên **Web Dashboard** qua **WebSocket**.
-5.  **Thực thi:** **Arduino Uno** nhận lệnh, điều khiển **Servo** và **Motor băng tải** để hoàn thành việc phân loại.
+1. **Phát hiện & Phân tích Vật thể (Uno):**
+    * **HC-SR04** phát hiện vật thể $\rightarrow$ Dừng băng tải.
+    * **HC-SR04** quét vật thể để nhận dạng **Hình khối**.
+    * **GY-31** quét để xác định **Màu sắc** (RGB).
+    * **Uno** sử dụng dữ liệu này để xác định **Mã phân loại** (ví dụ: `TD`).
+2. **Cập nhật Realtime (Uno $\rightarrow$ ESP32 $\rightarrow$ Web):**
+    * **Arduino Uno** gửi gói JSON `REALTIME` (chứa Mã, RGB, Hình khối) qua Serial 2.
+    * **ESP32** nhận, phân tích, và phát sóng qua **WebSocket** lên Dashboard.
+3. **Chờ tín hiệu Phân loại:**
+    * **Uno** khởi động băng tải, chờ vật thể di chuyển đến vị trí gạt.
+    * **Cảm biến IR** phát hiện vật thể $\rightarrow$ Dừng băng tải, bắt đầu quy trình gạt.
+4. **Phân loại & Xử lý lỗi (Uno):**
+    * **Uno** điều khiển **Servo MG996R** gạt vật thể theo mã phân loại.
+    * Nếu **Cảm biến IR** vẫn *Blocked* sau khi gạt $\rightarrow$ Thực hiện **thử lại** (Retry).
+    * Nếu thử lại thất bại quá 2 lần $\rightarrow$ Đánh dấu **Skipped** và tiếp tục.
+5. **Cập nhật Thống kê (Uno $\rightarrow$ ESP32 $\rightarrow$ Web):**
+    * Sau khi hoàn thành chu kỳ, **Arduino Uno** gửi gói JSON `COMPLETED` (chứa tổng bộ đếm mới và thời gian chu kỳ) qua Serial 2.
+    * **ESP32** cập nhật và phát sóng JSON `COMPLETED` lên Dashboard để vẽ lại Biểu đồ và cập nhật các chỉ số tổng thể.
 
 ### Giao tiếp Dữ liệu Chính
 
 | Kênh | Hướng | Ví dụ Lệnh/Dữ liệu | Mô tả |
 | :--- | :--- | :--- | :--- |
-| **Serial/UART** | ESP32 ➡️ Uno | `SORT:TV`, `SERVO:90`, `STOP` | Lệnh điều khiển vật lý cho Arduino Uno. |
-| **WebSocket** | ESP32 ➡️ Web | Payload `COMPLETED` | Gửi tổng số liệu đã phân loại và thời gian chu kỳ. |
-| **WebSocket** | ESP32 ➡️ Web | Payload `REALTIME` | Gửi dữ liệu nhận dạng hiện tại (Mã, R, G, B). |
-| **WebSocket** | Web ➡️ ESP32 | `CMD:RESET_COUNTERS` | Lệnh điều khiển từ Dashboard. |
-
----
-
-## 🖼️ Kết Quả Triển Khai Thực Tế
-
-### 1. Hình ảnh Sản phẩm Cơ khí
-
-*(Chèn các hình ảnh chất lượng cao về mô hình cơ khí thực tế của hệ thống phân loại.)*
-
-* ****
-* ****
-* **
-
-[Image of the color sensor and IR sensor setup]
-**
-
-### 2. Giao diện Web Dashboard
-
-*(Chèn các ảnh chụp màn hình rõ nét của giao diện Dashboard khi hệ thống đang chạy.)*
-
-* ****
-* ****
-* ****
-
-### 3. Video Hoạt động
-
-*(Chèn liên kết hoặc nhúng video hoạt động của hệ thống tại đây.)*
-
-* **[Video of the sorting machine successfully classifying a variety of objects (e.g., Red Round, Yellow Square)]**
-* **Link Video YouTube:** *(Chèn link của bạn tại đây)*
+| **Serial/UART** | ESP32 ➡️ Uno | `SERVO_POS:90`, `STOP`, `RESET` | Lệnh điều khiển vật lý cho Arduino Uno (từ Dashboard). |
+| **Serial/UART** | Uno ➡️ ESP32 | `{"type":"COMPLETED", ...}\n` | Gửi dữ liệu trạng thái và thống kê theo định dạng JSON. |
+| **WebSocket** | ESP32 ➡️ Web | Payload `COMPLETED`, `REALTIME`, `STATUS` | Cập nhật Dashboard theo ba loại dữ liệu chính. |
+| **WebSocket** | Web ➡️ ESP32 | `CMD:PAN=90`, `CMD:EMERGENCY_STOP` | Lệnh điều khiển từ Dashboard. |
 
 ---
 
@@ -106,16 +84,16 @@ Quá trình phân loại là một chu trình đồng bộ được điều khi�
 
 ### Yêu cầu Phần mềm
 * **Arduino IDE** (hoặc PlatformIO)
-* Thư viện **ESP32-CAM** (cho Board Manager)
-* Thư viện **WebServer, WebSocketsServer, ArduinoJson** (cho ESP32).
+* **Thư viện C++:** **`ArduinoJson`**, **`WebSocketsServer`** (cho ESP32).
+* **Frontend:** HTML, CSS, JavaScript (sử dụng **Chart.js** qua CDN).
 
 ### Các Bước Triển khai
-1.  **Cấu hình Firmware:** Cập nhật thông tin WiFi (`WIFI_SSID`, `WIFI_PASS`) trong code ESP32-CAM.
-2.  **Nạp Code:**
-    * Upload code `.ino` cho **Arduino Uno** (Servo, Motor control).
-    * Upload code `.ino` cho **ESP32-CAM** (IoT, WebServer).
-3.  **Thiết lập Web:** Đảm bảo file Dashboard (HTML/CSS/JS) được nạp vào bộ nhớ **SPIFFS/LITTLEFS** của ESP32-CAM.
-4.  **Vận hành:** Cấp nguồn và truy cập địa chỉ IP của ESP32-CAM trên trình duyệt để mở Dashboard: `http://[ESP32_IP_ADDRESS]`.
+1. **Cấu hình Firmware:**
+    * Cập nhật thông tin WiFi (`SSID` và `Password`) trong code **ESP32-CAM**.
+    * Tải code `.ino` riêng biệt cho **Arduino Uno** và **ESP32-CAM**.
+2. **Kết nối Serial (UART):**
+    * Kết nối chân **RX2 (GPIO 15)** và **TX2 (GPIO 14)** của ESP32-CAM với chân **TX** và **RX** của Arduino Uno. *(Sử dụng Bộ chuyển đổi mức logic nếu cần thiết do khác biệt điện áp 3.3V/5V).*
+3. **Vận hành:** Cấp nguồn và truy cập địa chỉ IP của ESP32-CAM trên trình duyệt để mở Dashboard giám sát.
 
 ---
 
@@ -125,4 +103,4 @@ Dự án được phát triển bởi **Nguyễn Quang Vinh**.
 
 * GitHub: https://github.com/VinhShindo
 
-Dự án này được phát hành dưới giấy phép **MIT**. Xem file [LICENSE](LICENSE) để biết thêm chi tiết.
+Dự án này được phát hành dưới giấy phép MIT. Xem file [LICENSE](LICENSE) để biết thêm chi tiết.
