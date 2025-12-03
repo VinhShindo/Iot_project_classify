@@ -1,8 +1,6 @@
 #include <Servo.h>
 #include <ArduinoJson.h>
-// #include <SoftwareSerial.h>
 
-// SoftwareSerial espSerial(A4, A5);
 const size_t JSON_DOC_SIZE = 512;
 StaticJsonDocument<JSON_DOC_SIZE> doc;
 
@@ -569,19 +567,16 @@ void loop() {
     if (millis() - lastJsonSendRealtime >= JSON_SEND_INTERVAL_REALTIME) {
         lastJsonSendRealtime = millis();
         String jsonPayload = createJsonPayload_Realtime();
-        // espSerial.println(jsonPayload);
         Serial.println(jsonPayload);
     }
     
     String statusPayload = createJsonPayload_Status(false);
     if (statusPayload.length() > 0) {
-        // espSerial.println(statusPayload);
         Serial.println(statusPayload);
     }
 
     if (shouldSendCompleted) {
         String completedPayload = createJsonPayload_Completed();
-        // espSerial.println(completedPayload);
         Serial.println(completedPayload);
         shouldSendCompleted = false;
     }
